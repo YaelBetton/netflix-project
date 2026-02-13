@@ -1,21 +1,33 @@
 import Button from "../common/Button";
 import MovieDescription from "./MovieDescription";
+import { useState } from "react";
 
 // Couleurs par genre
 const genreColors = {
-  'Action': 'bg-red-500',
-  'Comédie': 'bg-yellow-500',
-  'Drame': 'bg-blue-500',
-  'Science-Fiction': 'bg-purple-500',
-  'Horreur': 'bg-orange-500',
-  'Thriller': 'bg-gray-500'
+  Action: "bg-red-500",
+  Comédie: "bg-yellow-500",
+  Drame: "bg-blue-500",
+  "Science-Fiction": "bg-purple-500",
+  Horreur: "bg-orange-500",
+  Thriller: "bg-gray-500",
 };
 
 function MovieCard({ movie }) {
+  const [isLiked, setIsLiked] = useState(false);
+  const [likes, setLikes] = useState(movie.likes || 0);
+
+  const handleLike = () => {
+    if (isLiked) {
+      setLikes(likes - 1);
+      setIsLiked(false);
+    } else {
+      setLikes(likes + 1);
+      setIsLiked(true);
+    }
+  };
+
   return (
-    <div
-      className="group relative overflow-hidden rounded-lg cursor-pointer transition-transform duration-300 hover:scale-105"
-    >
+    <div className="group relative overflow-hidden rounded-lg cursor-pointer transition-transform duration-300 hover:scale-105">
       {/* Image principale */}
       <div className="relative aspect-[2/3]">
         <img
@@ -25,9 +37,7 @@ function MovieCard({ movie }) {
         />
 
         {/* Badge de note */}
-        <div
-          className="absolute top-2 right-2 bg-black/80 backdrop-blur-sm px-2 py-1 rounded"
-        >
+        <div className="absolute top-2 right-2 bg-black/80 backdrop-blur-sm px-2 py-1 rounded">
           <span className="text-yellow-400 font-bold text-sm">
             ⭐ {movie.rating}
           </span>
@@ -35,7 +45,7 @@ function MovieCard({ movie }) {
 
         {/* Badge de genre */}
         <div
-          className={`absolute bottom-2 left-2 ${genreColors[movie.genre] || 'bg-gray-600'} backdrop-blur-sm px-3 py-1 rounded-full`}
+          className={`absolute bottom-2 left-2 ${genreColors[movie.genre] || "bg-gray-600"} backdrop-blur-sm px-3 py-1 rounded-full`}
         >
           <span className="text-white font-semibold text-xs">
             {movie.genre}
@@ -43,10 +53,15 @@ function MovieCard({ movie }) {
         </div>
       </div>
       {/* Overlay au hover */}{" "}
-      <div
-        className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4"
-      >
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
         <h3 className="text-xl font-bold mb-2">{movie.title}</h3>
+
+        <button
+          className={`px-4 py-2 rounded ${isLiked ? "bg-red-500" : "bg-gray-500"}`}
+          onClick={handleLike}
+        >
+          {isLiked ? "❤" : "🤍"} {likes} likes
+        </button>
 
         <div className="flex items-center space-x-3 mb-3 text-sm">
           <span className="text-green-400 fontsemibold">{movie.rating}/10</span>
