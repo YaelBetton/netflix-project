@@ -1,4 +1,5 @@
 import Button from "../common/Button";
+import MovieDescription from "./MovieDescription";
 
 // Couleurs par genre
 const genreColors = {
@@ -53,9 +54,9 @@ function MovieCard({ movie }) {
           <span className="text-gray-400">{movie.duration}min</span>
         </div>
 
-        <p className="text-sm text-gray-300 mb-4 line-clamp-2">
-          {movie.description}
-        </p>
+        <div className="text-sm text-gray-300 mb-4">
+          <MovieDescription description={movie.description} />
+        </div>
 
         <div className="flex flex-col sm:flex-row gap-2">
           <Button size="sm" className="flex-1">
