@@ -12,7 +12,7 @@ const genreColors = {
   Thriller: "bg-gray-500",
 };
 
-function MovieCard({ movie }) {
+function MovieCard({ movie, onAddToCart = () => {} }) {
   const [isLiked, setIsLiked] = useState(false);
   const [likes, setLikes] = useState(movie.likes || 0);
 
@@ -24,6 +24,10 @@ function MovieCard({ movie }) {
       setLikes(likes + 1);
       setIsLiked(true);
     }
+  };
+
+  const handleAddToCart = () => {
+    onAddToCart(movie);
   };
 
   return (
@@ -74,7 +78,7 @@ function MovieCard({ movie }) {
         </div>
 
         <div className="flex flex-col sm:flex-row gap-2">
-          <Button size="sm" className="flex-1">
+          <Button size="sm" className="flex-1" onClick={handleAddToCart}>
             ▶ Louer {movie.price}€
           </Button>
           <Button variant="outline" size="sm" className="flex-1">

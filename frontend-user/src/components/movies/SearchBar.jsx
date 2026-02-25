@@ -1,28 +1,19 @@
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 
 function SearchBar({ movies, onSearch }) {
   const [searchTerm, setSearchTerm] = useState("");
-  const [isOpen, setIsOpen] = useState(false);
-  const [suggestions, setSuggestions] = useState([]);
 
-  useEffect(() => {
+  const suggestions = useMemo(() => {
     if (searchTerm.length >= 2) {
-      // Filtrer les films en fonction du titre et la description selon searchTerm
       const filtered = movies.filter((movie) =>
         movie.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         movie.description.toLowerCase().includes(searchTerm.toLowerCase())
       );
-      // Limiter à 5 films
-      setSuggestions(filtered.slice(0, 5));
-      // Afficher les suggestions
-      setIsOpen(true);
-      console.log("Suggestions:", filtered.slice(0, 5));
-    } else {
-      // vider la liste des suggestions
-      setSuggestions([]);
-      // Masquer le panneau
-      setIsOpen(false);
+      const sliced = filtered.slice(0, 5);
+      console.log("Suggestions:", sliced);
+      return sliced;
     }
+    return [];
   }, [searchTerm, movies]);
 
   const handleChange = (e) => {
@@ -31,21 +22,13 @@ function SearchBar({ movies, onSearch }) {
 
   const handleSelect = (movie) => {
     setSearchTerm(movie.title);
-    setIsOpen(false);
-    // TODO: Action lors de la sélection
     console.log("Film sélectionné:", movie);
     if (onSearch) {
       onSearch(movie);
     }
   };
 
-  const handleFocus = () => {
-    // Quand la zone de recherche reçoit le focus, si elle comporte au moins 2 caractères
-    // ouvrez la fenêtre de suggestions
-    if (searchTerm.length >= 2) {
-      setIsOpen(true);
-    }
-  };
+  const handleFocus = () => {};
 
   return (
     <div className="relative w-full max-w-md">
@@ -73,8 +56,7 @@ function SearchBar({ movies, onSearch }) {
         </svg>
       </div>
 
-      {/* Dropdown de suggestions */}
-      {isOpen && suggestions.length > 0 && (
+      {searchTerm.length >= 2 && suggestions.length > 0 && (
         <div className="absolute top-full left-0 right-0 mt-2 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-10">
           {suggestions.map((movie) => (
             <button

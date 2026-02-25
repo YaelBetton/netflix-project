@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import SearchBar from './SearchBar';
+import SearchBar from '../movies/SearchBar';
+import CartButton from './CartButton';
 
-function Navbar({ movies = [] }) {
+function Navbar({ movies = [], cartItems = [], onRemoveFromCart = () => {} }) {
   const [isScrolled] = useState(false);
 
   const handleSearch = (movie) => {
@@ -48,6 +49,9 @@ function Navbar({ movies = [] }) {
           <div className="flex items-center space-x-4">
             {/* Search Bar */}
             <SearchBar movies={movies} onSearch={handleSearch} />
+
+            {/* Cart Button */}
+            <CartButton cartItems={cartItems} onRemoveFromCart={onRemoveFromCart} />
 
             {/* User Avatar */}
             <div className="w-8 h-8 bg-primary rounded flex items-center justify-center cursor-pointer hover:bg-primary-dark transition-colors">

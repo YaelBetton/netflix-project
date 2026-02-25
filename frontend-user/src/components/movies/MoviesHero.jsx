@@ -1,6 +1,10 @@
 import Button from '../common/Button';
 
-function MoviesHero({ movie }) {
+function MoviesHero({ movie, onAddToCart = () => {} }) {
+	const handleRent = () => {
+		onAddToCart(movie);
+	};
+
 	return (
 		<div className="relative h-[80vh] w-full">
 			{/* Background Image */}
@@ -31,7 +35,7 @@ function MoviesHero({ movie }) {
 
 					{/* Actions */}
 					<div className="flex flex-col sm:flex-row gap-4">
-						<Button size="lg" className="shadow-2xl">
+						<Button size="lg" className="shadow-2xl" onClick={handleRent}>
 							<svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
 								<path d="M4.5 3.5v13l11-6.5-11-6.5z" />
 							</svg>

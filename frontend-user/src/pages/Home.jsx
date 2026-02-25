@@ -10,6 +10,22 @@ function Home() {
   const [loading, setLoading] = useState(true);
   const [allMovies, setAllMovies] = useState([]);
   const [filteredMovies, setFilteredMovies] = useState([]);
+  const [cartItems, setCartItems] = useState([]);
+
+  const addToCart = (movie) => {
+    const exists = cartItems.find(item => item.id === movie.id);
+    if (!exists) {
+      setCartItems([...cartItems, movie]);
+      console.log("Film ajouté au panier:", movie.title);
+    } else {
+      console.log("Ce film est déjà dans le panier");
+    }
+  };
+
+  const removeFromCart = (movieId) => {
+    setCartItems(cartItems.filter(item => item.id !== movieId));
+    console.log("Film retiré du panier");
+  };
 
   useEffect(() => {
     // Charger les films depuis le fichier JSON
@@ -58,35 +74,35 @@ function Home() {
   const recentMovies = movies.filter((movie) => movie.year > 2010).slice(0, 5);
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
-      <Navbar movies={allMovies} />
+    <div className="min-h-screen bg-black text-white">
+      <Navbar movies={allMovies} cartItems={cartItems} onRemoveFromCart={removeFromCart} />
 
       {/* Grande bannière hero avec le premier film */}
-      {featuredMovie && <MoviesHero movie={featuredMovie} />}
+      {featuredMovie && <MoviesHero movie={featuredMovie} onAddToCart={addToCart} />}
 
       <div className="container mx-auto">
         <MovieFilter movies={allMovies} onFilter={setFilteredMovies} />
-        <MovieList title="Films disponibles" movies={filteredMovies} />
+        <MovieList title="Films disponibles" movies={filteredMovies} onAddToCart={addToCart} />
       </div>
 
       {/* Section Films populaires */}
       {popularMovies.length > 0 && (
         <div className="container mx-auto px-4 py-8">
-          <MovieList title="Films populaires" movies={popularMovies} />
+          <MovieList title="Films populaires" movies={popularMovies} onAddToCart={addToCart} />
         </div>
       )}
 
       {/* Section Science-Fiction */}
       {sciFiMovies.length > 0 && (
         <div className="container mx-auto px-4 py-8">
-          <MovieList title="Science-Fiction" movies={sciFiMovies} />
+          <MovieList title="Science-Fiction" movies={sciFiMovies} onAddToCart={addToCart} />
         </div>
       )}
 
       {/* Section Films récents */}
       {recentMovies.length > 0 && (
         <div className="container mx-auto px-4 py-8">
-          <MovieList title="Films récents" movies={recentMovies} />
+          <MovieList title="Films récents" movies={recentMovies} onAddToCart={addToCart} />
         </div>
       )}
 

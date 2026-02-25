@@ -1,5 +1,5 @@
 import MovieCard from "./MovieCard";
-function MovieList({ title, movies }) {
+function MovieList({ title, movies, onAddToCart = () => {} }) {
   return (
     <section className="py-8">
       <h2 className="text-2xl md:text-3xl font-bold mb-6 px-4">{title}</h2>
@@ -9,7 +9,7 @@ function MovieList({ title, movies }) {
 xl:grid-cols-6 gap-4 px-4"
       >
         {movies.map((movie) => (
-          <MovieCard key={movie.id} movie={movie} />
+          <MovieCard key={movie.id} movie={movie} onAddToCart={onAddToCart} />
         ))}
       </div>
     </section>
