@@ -1,23 +1,28 @@
-import { useState, useEffect } from 'react';
-import Navbar from '../components/common/Navbar';
-import MoviesHero from '../components/movies/MoviesHero';
-import MovieList from '../components/movies/MovieList';
-import Footer from '../components/layout/Footer';
+import { useState, useEffect } from "react";
+import Navbar from "../components/common/Navbar";
+import MoviesHero from "../components/movies/MoviesHero";
+import MovieList from "../components/movies/MovieList";
+import MovieFilter from "../components/movies/MovieFilter";
+import Footer from "../components/layout/Footer";
 
 function Home() {
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [allMovies, setAllMovies] = useState([]);
+  const [filteredMovies, setFilteredMovies] = useState([]);
 
   useEffect(() => {
     // Charger les films depuis le fichier JSON
-    fetch('/data/movies.json')
+    fetch("/data/movies.json")
       .then((response) => response.json())
       .then((data) => {
         setMovies(data);
+        setAllMovies(data);
+        setFilteredMovies(data);
         setLoading(false);
       })
       .catch((error) => {
-        console.error('Erreur lors du chargement des films:', error);
+        console.error("Erreur lors du chargement des films:", error);
         setLoading(false);
       });
   }, []);
@@ -46,28 +51,30 @@ function Home() {
 
   // Films d'un genre spécifique (Science-Fiction) - 5 films
   const sciFiMovies = movies
-    .filter((movie) => movie.genre === 'Science-Fiction')
+    .filter((movie) => movie.genre === "Science-Fiction")
     .slice(0, 5);
 
   // Films récents (après 2010)
-  const recentMovies = movies
-    .filter((movie) => movie.year > 2010)
-    .slice(0, 5);
+  const recentMovies = movies.filter((movie) => movie.year > 2010).slice(0, 5);
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
-      <Navbar />
-      
+      <Navbar movies={allMovies} />
+
       {/* Grande bannière hero avec le premier film */}
       {featuredMovie && <MoviesHero movie={featuredMovie} />}
 
+      <div className="container mx-auto">
+        <MovieFilter movies={allMovies} onFilter={setFilteredMovies} />
+        <MovieList title="Films disponibles" movies={filteredMovies} />
+      </div>
+
       {/* Section Films populaires */}
       {popularMovies.length > 0 && (
-      <div className="container mx-auto px-4 py-8">
-        <MovieList title="Films populaires" movies={popularMovies} />  
-      </div>  
+        <div className="container mx-auto px-4 py-8">
+          <MovieList title="Films populaires" movies={popularMovies} />
+        </div>
       )}
-
 
       {/* Section Science-Fiction */}
       {sciFiMovies.length > 0 && (

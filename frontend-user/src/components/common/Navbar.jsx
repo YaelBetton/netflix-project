@@ -1,8 +1,13 @@
 import { useState } from 'react';
 import SearchBar from './SearchBar';
 
-function Navbar() {
+function Navbar({ movies = [] }) {
   const [isScrolled] = useState(false);
+
+  const handleSearch = (movie) => {
+    console.log("Film sélectionné depuis Navbar:", movie);
+    // TODO: Implémenter la navigation vers la page de détail du film
+  };
 
   // Note : useEffect sera vu au TP 03
   // Pour l'instant, version statique
@@ -42,7 +47,7 @@ function Navbar() {
           {/* User Section */}
           <div className="flex items-center space-x-4">
             {/* Search Bar */}
-            <SearchBar />
+            <SearchBar movies={movies} onSearch={handleSearch} />
 
             {/* User Avatar */}
             <div className="w-8 h-8 bg-primary rounded flex items-center justify-center cursor-pointer hover:bg-primary-dark transition-colors">
