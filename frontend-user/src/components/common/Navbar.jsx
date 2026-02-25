@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import SearchBar from '../movies/SearchBar';
 import CartButton from './CartButton';
+import { Link, NavLink } from 'react-router-dom';
+
 
 function Navbar({ movies = [], cartItems = [], onRemoveFromCart = () => {} }) {
   const [isScrolled] = useState(false);
@@ -21,26 +23,35 @@ function Navbar({ movies = [], cartItems = [], onRemoveFromCart = () => {} }) {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center space-x-8">
-            <h1 className="text-primary text-3xl font-bold tracking-tight">
+            <Link to="/" className="text-primary text-3xl font-bold tracking-tight">
               NETFLIX
-            </h1>
+            </Link>
 
             {/* Navigation Links */}
             <ul className="hidden md:flex space-x-6">
               <li>
-                <a href="#" className="hover:text-gray-300 transition-colors">
+                <NavLink 
+                  to="/" 
+                  className={({ isActive }) => isActive ? 'text-primary font-bold' : 'text-gray-300 hover:text-white transition-colors'}
+                >
                   Accueil
-                </a>
+                </NavLink>
               </li>
               <li>
-                <a href="#" className="hover:text-gray-300 transition-colors">
+                <NavLink 
+                  to="/movies" 
+                  className={({ isActive }) => isActive ? 'text-primary font-bold' : 'text-gray-300 hover:text-white transition-colors'}
+                >
                   Films
-                </a>
+                </NavLink>
               </li>
               <li>
-                <a href="#" className="hover:text-gray-300 transition-colors">
+                <NavLink 
+                  to="/my-rentals" 
+                  className={({ isActive }) => isActive ? 'text-primary font-bold' : 'text-gray-300 hover:text-white transition-colors'}
+                >
                   Mes locations
-                </a>
+                </NavLink>
               </li>
             </ul>
           </div>
@@ -54,9 +65,9 @@ function Navbar({ movies = [], cartItems = [], onRemoveFromCart = () => {} }) {
             <CartButton cartItems={cartItems} onRemoveFromCart={onRemoveFromCart} />
 
             {/* User Avatar */}
-            <div className="w-8 h-8 bg-primary rounded flex items-center justify-center cursor-pointer hover:bg-primary-dark transition-colors">
+            <Link to="/login" className="w-8 h-8 bg-primary rounded flex items-center justify-center cursor-pointer hover:bg-primary-dark transition-colors">
               <span className="text-sm font-bold">U</span>
-            </div>
+            </Link>
           </div>
         </div>
       </div>

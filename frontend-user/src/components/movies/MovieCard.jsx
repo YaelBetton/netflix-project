@@ -1,6 +1,7 @@
 import Button from "../common/Button";
 import MovieDescription from "./MovieDescription";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 // Couleurs par genre
 const genreColors = {
@@ -13,10 +14,12 @@ const genreColors = {
 };
 
 function MovieCard({ movie, onAddToCart = () => {} }) {
+  const navigate = useNavigate();
   const [isLiked, setIsLiked] = useState(false);
   const [likes, setLikes] = useState(movie.likes || 0);
 
-  const handleLike = () => {
+  const handleLike = (e) => {
+    e.stopPropagation();
     if (isLiked) {
       setLikes(likes - 1);
       setIsLiked(false);
@@ -26,14 +29,19 @@ function MovieCard({ movie, onAddToCart = () => {} }) {
     }
   };
 
-  const handleAddToCart = () => {
+  const handleAddToCart = (e) => {
+    e.stopPropagation();
     onAddToCart(movie);
+  };
+
+  const navigateToMovie = () => {
+    navigate(`/movie/${movie.id}`);
   };
 
   return (
     <div className="group relative overflow-hidden rounded-lg cursor-pointer transition-transform duration-300 hover:scale-105">
       {/* Image principale */}
-      <div className="relative aspect-[2/3]">
+      <div className="relative aspect-[2/3]" onClick={navigateToMovie}>
         <img
           src={movie.poster}
           alt={movie.title}
