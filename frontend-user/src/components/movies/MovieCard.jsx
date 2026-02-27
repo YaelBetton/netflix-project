@@ -38,10 +38,19 @@ function MovieCard({ movie, onAddToCart = () => {} }) {
     navigate(`/movie/${movie.id}`);
   };
 
+  const handleCardClick = () => {
+    navigateToMovie();
+  };
+
+  const handleInfoClick = (e) => {
+    e.stopPropagation();
+    navigateToMovie();
+  };
+
   return (
-    <div className="group relative overflow-hidden rounded-lg cursor-pointer transition-transform duration-300 hover:scale-105">
+    <div className="group relative overflow-hidden rounded-lg cursor-pointer transition-transform duration-300 hover:scale-105" onClick={handleCardClick}>
       {/* Image principale */}
-      <div className="relative aspect-[2/3]" onClick={navigateToMovie}>
+      <div className="relative aspect-[2/3]">
         <img
           src={movie.poster}
           alt={movie.title}
@@ -89,7 +98,7 @@ function MovieCard({ movie, onAddToCart = () => {} }) {
           <Button size="sm" className="flex-1" onClick={handleAddToCart}>
             ▶ Louer {movie.price}€
           </Button>
-          <Button variant="outline" size="sm" className="flex-1">
+          <Button variant="outline" size="sm" className="flex-1" onClick={handleInfoClick}>
             + Info
           </Button>
         </div>
