@@ -1,23 +1,22 @@
-import { Link } from "react-router-dom";
-import Navbar from "../components/common/Navbar";
-import Footer from "../components/layout/Footer";
+import { useNavigate } from "react-router-dom";
 import Button from "../components/common/Button";
 
 function NotFound() {
+  const navigate = useNavigate();
+
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
-      <Navbar />
-      <div className="flex flex-col items-center justify-center py-20 px-4 pt-24">
-        <h1 className="text-6xl font-bold mb-4">404</h1>
-        <h2 className="text-3xl font-semibold mb-4">Page non trouvée</h2>
-        <p className="text-gray-400 mb-8 text-center">
-          Désolé, la page que vous recherchez n&apos;existe pas.
-        </p>
-        <Link to="/">
-          <Button>Retour à l&apos;accueil</Button>
-        </Link>
+    <div className="min-h-screen bg-black text-white flex items-center justify-center px-4">
+      <div className="text-center">
+        <h1 className="text-9xl font-bold text-red-600 mb-4">404</h1>
+        <h2 className="text-3xl font-bold mb-3">Page introuvable</h2>
+        <p className="text-gray-400 mb-8">Oups ! La page que vous recherchez n&apos;existe pas.</p>
+        <Button
+          onClick={() => navigate("/")}
+          className="bg-red-600 hover:bg-red-700 text-white font-semibold px-8 py-3"
+        >
+          Retour à l&apos;accueil
+        </Button>
       </div>
-      <Footer />
     </div>
   );
 }
