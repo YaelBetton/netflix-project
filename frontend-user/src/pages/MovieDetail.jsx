@@ -9,6 +9,7 @@ function MovieDetail() {
   const navigate = useNavigate();
   const [movie, setMovie] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [notification, setNotification] = useState(null);
 
   useEffect(() => {
     // Charger les films et trouver celui correspondant à l'ID
@@ -26,13 +27,40 @@ function MovieDetail() {
   }, [id]);
 
   const handleRent = () => {
-    if (movie) {
-      const rentals = JSON.parse(localStorage.getItem("rentals") || "[]");
-      rentals.push({ ...movie, rentalDate: new Date().toISOString() });
-      localStorage.setItem("rentals", JSON.stringify(rentals));
-      alert(`${movie.title} a été ajouté à vos locations !`);
-      navigate("/my-rentals");
+    // Vérifier si l'utilisateur est connecté
+    const user = localStorage.getItem("user");
+    if (!user) {
+      navigate("/login");
+      return;
     }
+
+    // Créer la location
+    const rental = {
+      ...movie,
+      rentalDate: new Date().toISOString(),
+      expiryDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 jours
+    };
+
+    // Récupérer les locations existantes
+    const rentals = JSON.parse(localStorage.getItem("rentals") || "[]");
+
+    // Vérifier si déjà loué avec Array.some
+    const alreadyRented = rentals.some((r) => r.id === movie.id);
+
+    if (alreadyRented) {
+      setNotification({ type: "error", message: "Vous avez déjà loué ce film" });
+      return;
+    }
+
+    // Ajouter la nouvelle location et sauvegarder
+    rentals.push(rental);
+    localStorage.setItem("rentals", JSON.stringify(rentals));
+    setNotification({ type: "success", message: "Film loué avec succès !" });
+
+    // Rediriger vers MyRentals après 2 secondes
+    setTimeout(() => {
+      navigate("/my-rentals");
+    }, 2000);
   };
 
   if (loading) {
@@ -66,7 +94,16 @@ function MovieDetail() {
   return (
     <div className="min-h-screen bg-black text-white">
       <Navbar />
-      
+
+      {/* Notification */}
+      {notification && (
+        <div className={`fixed top-20 right-4 px-6 py-3 rounded-lg shadow-xl z-50 text-white font-semibold ${
+          notification.type === "success" ? "bg-green-500" : "bg-red-500"
+        }`}>
+          {notification.message}
+        </div>
+      )}
+
       {/* Hero Section avec image de fond en pleine page */}
       <div 
         className="relative min-h-screen bg-cover bg-center bg-no-repeat"
@@ -111,7 +148,7 @@ function MovieDetail() {
               {/* Bouton Louer */}
               <div className="mb-8">
                 <Button size="lg" onClick={handleRent} className="bg-red-600 hover:bg-red-700 font-semibold px-8">
-                  ▶ Louer pour {movie.price}€
+                  🎬 Louer pour {movie.price}€
                 </Button>
               </div>
 
