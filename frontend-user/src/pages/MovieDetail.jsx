@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../components/common/Navbar";
 import Footer from "../components/layout/Footer";
 import Button from "../components/common/Button";
+import Breadcrumb from "../components/common/Breadcrumb";
 
 function MovieDetail() {
   const { id } = useParams();
@@ -112,6 +113,15 @@ function MovieDetail() {
         {/* Overlay gradient */}
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent"></div>
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-transparent to-transparent"></div>
+
+        {/* Breadcrumb */}
+        <div className="relative container mx-auto px-4 pt-24">
+          <Breadcrumb items={[
+            { label: 'Films', path: '/' },
+            { label: movie.genre, path: `/?genre=${movie.genre}` },
+            { label: movie.title }
+          ]} />
+        </div>
         
         {/* Contenu */}
         <div className="relative container mx-auto px-4 pt-64 pb-12">
