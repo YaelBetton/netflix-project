@@ -37,19 +37,26 @@ function MovieDetail() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-primary"></div>
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-20 w-20 border-t-4 border-b-4 border-red-600 mx-auto mb-4"></div>
+          <p className="text-xl text-gray-400">Message d'attente, pendant la recherche du film</p>
+        </div>
       </div>
     );
   }
 
   if (!movie) {
     return (
-      <div className="min-h-screen bg-gray-900 text-white">
+      <div className="min-h-screen bg-black text-white">
         <Navbar />
-        <div className="container mx-auto px-4 py-20 pt-24 text-center">
-          <h1 className="text-3xl font-bold mb-4">Film non trouvé</h1>
-          <Button onClick={() => navigate("/")}>Retour à l&apos;accueil</Button>
+        <div className="container mx-auto px-4 py-20 pt-24">
+          <div className="max-w-md mx-auto text-center bg-gray-900 rounded-lg p-12">
+            <div className="text-6xl mb-4">🎬</div>
+            <h1 className="text-3xl font-bold mb-4">Film introuvable</h1>
+            <p className="text-gray-400 mb-6">Le film que vous recherchez n'existe pas</p>
+            <Button onClick={() => navigate("/")} className="bg-red-600 hover:bg-red-700">Retour à l&apos;accueil</Button>
+          </div>
         </div>
         <Footer />
       </div>
@@ -57,52 +64,76 @@ function MovieDetail() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className="min-h-screen bg-black text-white">
       <Navbar />
       
-      {/* Hero Section avec image de fond */}
+      {/* Hero Section avec image de fond en pleine page */}
       <div 
-        className="relative h-[70vh] bg-cover bg-center"
-        style={{ backgroundImage: `url(${movie.poster})` }}
+        className="relative min-h-screen bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url(${movie.backdrop || movie.poster})` }}
       >
-        <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/70 to-transparent"></div>
-        <div className="relative container mx-auto px-4 h-full flex items-end pb-12 pt-24">
-          <div className="max-w-2xl">
-            <h1 className="text-5xl font-bold mb-4">{movie.title}</h1>
-            <div className="flex items-center space-x-4 mb-4 text-lg">
-              <span className="text-yellow-400">⭐ {movie.rating}/10</span>
-              <span>{movie.year}</span>
-              <span>{movie.duration} min</span>
-              <span className="px-3 py-1 bg-red-600 rounded">{movie.genre}</span>
-            </div>
-            <p className="text-gray-300 text-lg mb-6">{movie.description}</p>
-            <div className="flex space-x-4">
-              <Button size="lg" onClick={handleRent}>
-                ▶ Louer pour {movie.price}€
-              </Button>
-              <Button variant="outline" size="lg" onClick={() => navigate(-1)}>
+        {/* Overlay gradient */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-transparent to-transparent"></div>
+        
+        {/* Contenu */}
+        <div className="relative container mx-auto px-4 pt-64 pb-12">
+          {/* Bouton retour, titre et badges */}
+          <div className="mb-12">
+            {/* Bouton retour */}
+            <div className="mb-4">
+              <button onClick={() => navigate(-1)} className="text-white hover:text-gray-300 transition-colors">
                 ← Retour
-              </Button>
+              </button>
+            </div>
+            
+            {/* Titre et badges */}
+            <h1 className="text-5xl md:text-6xl font-bold mb-4">{movie.title}</h1>
+            
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="bg-red-600 px-3 py-1 rounded font-bold text-sm">{movie.rating}/10</span>
+              <span className="text-gray-300">{movie.year}</span>
+              <span className="text-gray-300">{movie.duration} min</span>
+              <span className="border border-gray-400 px-3 py-1 rounded text-sm">{movie.genre}</span>
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* Informations supplémentaires */}
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid md:grid-cols-2 gap-8">
-          <div>
-            <h2 className="text-2xl font-bold mb-4">Synopsis</h2>
-            <p className="text-gray-400">{movie.description}</p>
-          </div>
-          <div>
-            <h2 className="text-2xl font-bold mb-4">Détails</h2>
-            <div className="space-y-2 text-gray-400">
-              <p><span className="font-semibold text-white">Genre:</span> {movie.genre}</p>
-              <p><span className="font-semibold text-white">Année:</span> {movie.year}</p>
-              <p><span className="font-semibold text-white">Durée:</span> {movie.duration} minutes</p>
-              <p><span className="font-semibold text-white">Note:</span> {movie.rating}/10</p>
-              <p><span className="font-semibold text-white">Prix de location:</span> {movie.price}€</p>
+          {/* Synopsis et Poster */}
+          <div className="grid md:grid-cols-3 gap-8 items-start">
+            {/* Synopsis et infos - 2 colonnes */}
+            <div className="md:col-span-2">
+              {/* Synopsis */}
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold mb-3">Synopsis</h2>
+                <p className="text-gray-300 text-base leading-relaxed max-w-2xl">{movie.description}</p>
+              </div>
+
+              {/* Bouton Louer */}
+              <div className="mb-8">
+                <Button size="lg" onClick={handleRent} className="bg-red-600 hover:bg-red-700 font-semibold px-8">
+                  ▶ Louer pour {movie.price}€
+                </Button>
+              </div>
+
+              {/* Informations */}
+              <div className="flex flex-col h-64">
+                <h3 className="text-xl font-bold mb-3">Informations</h3>
+                <div className="space-y-2 text-gray-300 bg-black/85 p-6 rounded-lg flex-grow flex flex-col justify-start">
+                  <p><span className="font-semibold text-white">Genre:</span> {movie.genre}</p>
+                  <p><span className="font-semibold text-white">Année:</span> {movie.year}</p>
+                  <p><span className="font-semibold text-white">Durée:</span> {movie.duration} minutes</p>
+                  <p><span className="font-semibold text-white">Note:</span> {movie.rating}/10</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Poster du film - 1 colonne */}
+            <div className="md:col-span-1 flex justify-center md:justify-end">
+              <img 
+                src={movie.poster} 
+                alt={movie.title}
+                className="w-full max-w-sm rounded-lg shadow-2xl"
+              />
             </div>
           </div>
         </div>

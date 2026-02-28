@@ -1,8 +1,15 @@
 import Button from '../common/Button';
+import { useNavigate } from 'react-router-dom';
 
 function MoviesHero({ movie, onAddToCart = () => {} }) {
+	const navigate = useNavigate();
+	
 	const handleRent = () => {
 		onAddToCart(movie);
+	};
+	
+	const handleMoreInfo = () => {
+		navigate(`/movie/${movie.id}`);
 	};
 
 	return (
@@ -42,7 +49,7 @@ function MoviesHero({ movie, onAddToCart = () => {} }) {
 							Louer pour {movie.price}€
 						</Button>
 
-						<Button variant="secondary" size="lg">
+						<Button variant="secondary" size="lg" onClick={handleMoreInfo}>
 							<svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />
 							</svg>
