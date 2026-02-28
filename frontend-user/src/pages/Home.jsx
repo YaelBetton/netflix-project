@@ -13,12 +13,15 @@ function Home() {
   const [cartItems, setCartItems] = useState([]);
 
   const addToCart = (movie) => {
-    const exists = cartItems.find(item => item.id === movie.id);
+    const rentals = JSON.parse(localStorage.getItem("rentals") || "[]");
+    const exists = rentals.find(item => item.id === movie.id);
     if (!exists) {
+      rentals.push({ ...movie, rentalDate: new Date().toISOString() });
+      localStorage.setItem("rentals", JSON.stringify(rentals));
       setCartItems([...cartItems, movie]);
-      console.log("Film ajouté au panier:", movie.title);
+      alert(`${movie.title} a été ajouté à vos locations !`);
     } else {
-      console.log("Ce film est déjà dans le panier");
+      alert(`${movie.title} est déjà dans vos locations.`);
     }
   };
 
