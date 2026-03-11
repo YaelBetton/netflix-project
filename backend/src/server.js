@@ -6,12 +6,14 @@ import mongoose from "mongoose";
 import userRoutes from "./routes/UserRouter.js";
 // Importer de la route
 import movieRoutes from './routes/movie.routes.js';
+import rentalRoutes from './routes/rental.routes.js';
 // Utilisation de la Routes API
 // Charger les variables d'environnement
 dotenv.config();
 
 const app = express();
 app.use('/api/movies', movieRoutes);
+app.use('/api/rentals', rentalRoutes);
 app.use(express.json()); // Middleware pour lire le JSON
 // Toutes les routes dans userRoutes commenceront par /api/users
 app.use('/api/users', userRoutes);
