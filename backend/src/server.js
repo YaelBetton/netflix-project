@@ -3,10 +3,19 @@ import dotenv from "dotenv";
 import cors from "cors";
 import connectDB from "./config/database.js";
 import mongoose from "mongoose";
+import userRoutes from "./routes/UserRouter.js";
+// Importer de la route
+import movieRoutes from './routes/movie.routes.js';
+// Utilisation de la Routes API
 // Charger les variables d'environnement
 dotenv.config();
-// Initialiser Express
+
 const app = express();
+app.use('/api/movies', movieRoutes);
+app.use(express.json()); // Middleware pour lire le JSON
+// Toutes les routes dans userRoutes commenceront par /api/users
+app.use('/api/users', userRoutes);
+app.listen(3000, () => console.log("Serveur lancé sur le port 3000"));
 const PORT = process.env.PORT || 5000;
 // Connecter à MongoDB
 connectDB();
