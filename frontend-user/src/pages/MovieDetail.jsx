@@ -4,6 +4,8 @@ import Navbar from "../components/common/Navbar";
 import Footer from "../components/layout/Footer";
 import Button from "../components/common/Button";
 import Breadcrumb from "../components/common/Breadcrumb";
+import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthProvider";
 
 function MovieDetail() {
   const { id } = useParams();
@@ -11,13 +13,15 @@ function MovieDetail() {
   const [movie, setMovie] = useState(null);
   const [loading, setLoading] = useState(true);
   const [notification, setNotification] = useState(null);
+  const { addToCart, isInCart, isRented, getRentalByMovieId, rentMovie } = useCart();
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     // Charger les films et trouver celui correspondant à l'ID
     fetch("/data/movies.json")
       .then((response) => response.json())
       .then((data) => {
-        const foundMovie = data.find((m) => m.id === parseInt(id));
+        const foundMovie = data.find((m) => m.id === Number.parseInt(id, 10));
         setMovie(foundMovie);
         setLoading(false);
       })
@@ -28,40 +32,42 @@ function MovieDetail() {
   }, [id]);
 
   const handleRent = () => {
-    // Vérifier si l'utilisateur est connecté
-    const user = localStorage.getItem("user");
-    if (!user) {
+    if (!isAuthenticated()) {
       navigate("/login");
       return;
     }
 
-    // Créer la location
-    const rental = {
-      ...movie,
-      rentalDate: new Date().toISOString(),
-      expiryDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 jours
-    };
-
-    // Récupérer les locations existantes
-    const rentals = JSON.parse(localStorage.getItem("rentals") || "[]");
-
-    // Vérifier si déjà loué avec Array.some
-    const alreadyRented = rentals.some((r) => r.id === movie.id);
-
-    if (alreadyRented) {
-      setNotification({ type: "error", message: "Vous avez déjà loué ce film" });
+    const result = rentMovie(movie);
+    if (!result.success) {
+      setNotification({ type: "error", message: result.error || "Impossible de louer ce film" });
       return;
     }
 
-    // Ajouter la nouvelle location et sauvegarder
-    rentals.push(rental);
-    localStorage.setItem("rentals", JSON.stringify(rentals));
     setNotification({ type: "success", message: "Film loué avec succès !" });
 
-    // Rediriger vers MyRentals après 2 secondes
     setTimeout(() => {
       navigate("/my-rentals");
-    }, 2000);
+    }, 1200);
+  };
+
+  const handleAddToCart = () => {
+    if (!isAuthenticated()) {
+      navigate("/login");
+      return;
+    }
+
+    if (isRented(movie.id)) {
+      setNotification({ type: "error", message: "Ce film est déjà loué" });
+      return;
+    }
+
+    if (isInCart(movie.id)) {
+      setNotification({ type: "success", message: "Ce film est déjà dans votre panier" });
+      return;
+    }
+
+    addToCart(movie);
+    setNotification({ type: "success", message: "Film ajouté au panier !" });
   };
 
   if (loading) {
@@ -92,6 +98,10 @@ function MovieDetail() {
     );
   }
 
+  const movieInCart = isInCart(movie.id);
+  const movieAlreadyRented = isRented(movie.id);
+  const movieRental = getRentalByMovieId(movie.id);
+
   return (
     <div className="min-h-screen bg-black text-white">
       <Navbar />
@@ -111,8 +121,8 @@ function MovieDetail() {
         style={{ backgroundImage: `url(${movie.backdrop || movie.poster})` }}
       >
         {/* Overlay gradient */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent"></div>
-        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-transparent to-transparent"></div>
+        <div className="absolute inset-0 bg-linear-to-t from-black via-black/60 to-transparent"></div>
+        <div className="absolute inset-0 bg-linear-to-r from-black/80 via-transparent to-transparent"></div>
 
         {/* Breadcrumb */}
         <div className="relative container mx-auto px-4 pt-24">
@@ -155,17 +165,34 @@ function MovieDetail() {
                 <p className="text-gray-300 text-base leading-relaxed max-w-2xl">{movie.description}</p>
               </div>
 
-              {/* Bouton Louer */}
-              <div className="mb-8">
-                <Button size="lg" onClick={handleRent} className="bg-red-600 hover:bg-red-700 font-semibold px-8">
-                  🎬 Louer pour {movie.price}€
+              {/* Boutons actions */}
+              <div className="mb-8 flex flex-col sm:flex-row gap-3">
+                <Button
+                  size="lg"
+                  onClick={handleRent}
+                  className="bg-red-600 hover:bg-red-700 font-semibold px-8"
+                >
+                  🎬 Louer maintenant - {movie.price}€
+                </Button>
+                <Button
+                  size="lg"
+                  onClick={handleAddToCart}
+                  className={`font-semibold px-8 ${movieInCart ? "bg-gray-700 border border-blue-500" : "bg-gray-800 hover:bg-gray-700"}`}
+                >
+                  {movieInCart ? "✓ Dans le panier" : "+ Ajouter au panier"}
                 </Button>
               </div>
+
+              {movieAlreadyRented && (
+                <div className="inline-flex items-center rounded bg-green-900/70 border border-green-600 px-3 py-1 text-xs text-green-300 mb-6">
+                  Film loué jusqu&apos;au {new Date(movieRental.expiryDate).toLocaleDateString("fr-FR")}
+                </div>
+              )}
 
               {/* Informations */}
               <div className="flex flex-col h-64">
                 <h3 className="text-xl font-bold mb-3">Informations</h3>
-                <div className="space-y-2 text-gray-300 bg-black/85 p-6 rounded-lg flex-grow flex flex-col justify-start">
+                <div className="space-y-2 text-gray-300 bg-black/85 p-6 rounded-lg grow flex flex-col justify-start">
                   <p><span className="font-semibold text-white">Genre:</span> {movie.genre}</p>
                   <p><span className="font-semibold text-white">Année:</span> {movie.year}</p>
                   <p><span className="font-semibold text-white">Durée:</span> {movie.duration} minutes</p>

@@ -1,19 +1,18 @@
-import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useCart } from "../../context/CartContext";
 
-function CartButton({ cartItems = [], onRemoveFromCart = () => {} }) {
-  const [showCart, setShowCart] = useState(false);
-  const cartCount = cartItems.length;
-
-  const toggleShow = () => {
-    setShowCart((previousShow) => !previousShow);
-  };
+function CartButton() {
+  const { getCartCount } = useCart();
+  const navigate = useNavigate();
+  const cartCount = getCartCount();
 
   return (
     <div className="relative flex items-center">
       <button
         type="button"
-        onClick={toggleShow}
+        onClick={() => navigate("/cart")}
         className="relative hover:text-gray-300 transition"
+        aria-label="Ouvrir le panier"
       >
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -32,42 +31,6 @@ function CartButton({ cartItems = [], onRemoveFromCart = () => {} }) {
           </span>
         )}
       </button>
-
-      {showCart && (
-        <div className="absolute top-full right-0 mt-2 w-80 bg-gray-900 border border-gray-700 rounded-lg shadow-xl p-4 z-50">
-          {cartItems.length === 0 ? (
-            <p className="text-sm text-gray-400">Votre panier est vide.</p>
-          ) : (
-            <>
-              <p className="text-xs text-gray-400 mb-3">
-                Double-cliquez sur un film pour le retirer du panier.
-              </p>
-              <ul className="space-y-3">
-                {cartItems.map((movie) => (
-                  <li
-                    key={movie.id}
-                    onDoubleClick={() => onRemoveFromCart(movie.id)}
-                    className="flex items-center gap-3 cursor-pointer hover:bg-gray-800 rounded p-2 transition"
-                  >
-                    <img
-                      src={movie.poster}
-                      alt={movie.title}
-                      className="w-10 h-14 rounded object-cover shrink-0"
-                    />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-white truncate">{movie.title}</p>
-                      <p className="text-xs text-gray-400 truncate">{movie.genre}</p>
-                    </div>
-                    <span className="text-sm font-semibold text-primary whitespace-nowrap">
-                      {movie.price}€
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </>
-          )}
-        </div>
-      )}
     </div>
   );
 }

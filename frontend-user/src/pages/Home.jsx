@@ -4,31 +4,14 @@ import MoviesHero from "../components/movies/MoviesHero";
 import MovieList from "../components/movies/MovieList";
 import MovieFilter from "../components/movies/MovieFilter";
 import Footer from "../components/layout/Footer";
+import { useCart } from "../context/CartContext";
 
 function Home() {
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [allMovies, setAllMovies] = useState([]);
   const [filteredMovies, setFilteredMovies] = useState([]);
-  const [cartItems, setCartItems] = useState([]);
-
-  const addToCart = (movie) => {
-    const rentals = JSON.parse(localStorage.getItem("rentals") || "[]");
-    const exists = rentals.find(item => item.id === movie.id);
-    if (!exists) {
-      rentals.push({ ...movie, rentalDate: new Date().toISOString() });
-      localStorage.setItem("rentals", JSON.stringify(rentals));
-      setCartItems([...cartItems, movie]);
-      alert(`${movie.title} a été ajouté à vos locations !`);
-    } else {
-      alert(`${movie.title} est déjà dans vos locations.`);
-    }
-  };
-
-  const removeFromCart = (movieId) => {
-    setCartItems(cartItems.filter(item => item.id !== movieId));
-    console.log("Film retiré du panier");
-  };
+  const { addToCart } = useCart();
 
   useEffect(() => {
     // Charger les films depuis le fichier JSON
@@ -78,7 +61,7 @@ function Home() {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      <Navbar movies={allMovies} cartItems={cartItems} onRemoveFromCart={removeFromCart} />
+      <Navbar movies={allMovies} />
 
       {/* Grande bannière hero avec le premier film */}
       {featuredMovie && <MoviesHero movie={featuredMovie} onAddToCart={addToCart} />}

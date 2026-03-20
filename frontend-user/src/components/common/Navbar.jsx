@@ -4,7 +4,7 @@ import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthProvider';
 
 
-function Navbar({ movies = [], cartItems = [], onRemoveFromCart = () => {} }) {
+function Navbar() {
   const [isScrolled] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const { user, logout, isAuthenticated } = useAuth();
@@ -21,7 +21,7 @@ function Navbar({ movies = [], cartItems = [], onRemoveFromCart = () => {} }) {
 
   return (
     <nav className={`fixed top-0 w-full z-50 transition-colors duration-300 ${
-      isScrolled ? 'bg-black' : 'bg-gradient-to-b from-black/80 to-transparent'
+      isScrolled ? 'bg-black' : 'bg-linear-to-b from-black/80 to-transparent'
     }`}>
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
@@ -79,7 +79,7 @@ function Navbar({ movies = [], cartItems = [], onRemoveFromCart = () => {} }) {
             </button>
 
             {/* Cart Button */}
-            <CartButton cartItems={cartItems} onRemoveFromCart={onRemoveFromCart} />
+            <CartButton />
 
             {isAuthenticated() ? (
               <div className="relative">

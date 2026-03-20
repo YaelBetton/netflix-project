@@ -5,33 +5,38 @@ import MyRentals from "./pages/MyRentals";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
+import Cart from "./pages/Cart";
 import ProtectedRoute from "./utils/ProtectedRoute";
 import { AuthProvider } from "./context/AuthProvider";
+import { CartProvider } from "./context/CartContext";
 
 function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <Routes>
-          {/* Routes publiques */}
-          <Route path="/" element={<Home />} />
-          <Route path="/movie/:id" element={<MovieDetail />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+        <CartProvider>
+          <Routes>
+            {/* Routes publiques */}
+            <Route path="/" element={<Home />} />
+            <Route path="/movie/:id" element={<MovieDetail />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/cart" element={<Cart />} />
 
-          {/* Routes protégées */}
-          <Route
-            path="/my-rentals"
-            element={
-              <ProtectedRoute>
-                <MyRentals />
-              </ProtectedRoute>
-            }
-          />
+            {/* Routes protégées */}
+            <Route
+              path="/my-rentals"
+              element={
+                <ProtectedRoute>
+                  <MyRentals />
+                </ProtectedRoute>
+              }
+            />
 
-          {/* 404 */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+            {/* 404 */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </CartProvider>
       </AuthProvider>
     </BrowserRouter>
   );
