@@ -51,14 +51,6 @@ function Navbar({ movies = [] }) {
               </li>
               <li>
                 <NavLink 
-                  to="/movies" 
-                  className={({ isActive }) => isActive ? 'text-primary font-bold' : 'text-gray-300 hover:text-white transition-colors'}
-                >
-                  Films
-                </NavLink>
-              </li>
-              <li>
-                <NavLink 
                   to="/my-rentals" 
                   className={({ isActive }) => isActive ? 'text-primary font-bold' : 'text-gray-300 hover:text-white transition-colors'}
                 >
