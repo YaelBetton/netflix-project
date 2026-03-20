@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/common/Navbar";
 import Input from "../components/common/Input";
 import Button from "../components/common/Button";
+import { useAuth } from "../context/AuthProvider";
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -13,7 +14,9 @@ function Register() {
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const [apiError, setApiError] = useState("");
   const navigate = useNavigate();
+  const { register } = useAuth();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -59,20 +62,16 @@ function Register() {
     }
 
     setLoading(true);
+    setApiError("");
 
-    // Simulation d'inscription
-    setTimeout(() => {
-      localStorage.setItem(
-        "user",
-        JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-        })
-      );
-      setLoading(false);
-      // Aller à l'accueil
+    const result = await register(formData.name, formData.email);
+    setLoading(false);
+
+    if (result.success) {
       navigate("/");
-    }, 1000);
+    } else {
+      setApiError(result.error || "Erreur lors de l'inscription");
+    }
   };
 
   return (
@@ -87,6 +86,12 @@ function Register() {
 
         {/* Titre */}
         <h2 className="text-3xl font-bold mb-8">S&apos;inscrire</h2>
+
+        {apiError && (
+          <div className="bg-red-600 text-white p-3 rounded mb-4 text-center">
+            {apiError}
+          </div>
+        )}
 
         {/* Formulaire */}
         <form onSubmit={handleSubmit} className="space-y-4">
