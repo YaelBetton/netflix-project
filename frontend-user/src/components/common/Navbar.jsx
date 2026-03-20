@@ -2,13 +2,21 @@ import { useState } from 'react';
 import CartButton from './CartButton';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthProvider';
+import SearchBar from '../movies/SearchBar';
 
 
-function Navbar() {
+function Navbar({ movies = [] }) {
   const [isScrolled] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
   const { user, logout, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+
+  const handleSearch = (movie) => {
+    if (!movie?.id) return;
+    setShowSearch(false);
+    navigate(`/movie/${movie.id}`);
+  };
 
   const handleLogout = () => {
     logout();
@@ -62,21 +70,34 @@ function Navbar() {
 
           {/* User Section */}
           <div className="flex items-center space-x-4">
-            <button className="hover:text-gray-300 transition-colors" aria-label="Rechercher">
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setShowSearch((previous) => !previous)}
+                className="hover:text-gray-300 transition-colors"
+                aria-label="Ouvrir la recherche"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
-              </svg>
-            </button>
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+              </button>
+
+              {showSearch && (
+                <div className="absolute right-0 top-full mt-2 w-80 z-50">
+                  <SearchBar movies={movies} onSearch={handleSearch} />
+                </div>
+              )}
+            </div>
 
             {/* Cart Button */}
             <CartButton />
