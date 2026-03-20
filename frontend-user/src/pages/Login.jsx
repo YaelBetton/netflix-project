@@ -4,6 +4,7 @@ import Navbar from "../components/common/Navbar";
 import Footer from "../components/layout/Footer";
 import Input from "../components/common/Input";
 import Button from "../components/common/Button";
+import { useAuth } from "../context/AuthProvider";
 
 function Login() {
   const [formData, setFormData] = useState({
@@ -14,6 +15,7 @@ function Login() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
+
 
   const handleChange = (e) => {
     setFormData({
@@ -43,44 +45,31 @@ function Login() {
     if (!formData.password) {
       newErrors.password = "Le mot de passe est requis";
     } else if (formData.password.length < 6) {
-      newErrors.password = "Le mot de passe doit contenir au moins 6 caractères";
+      newErrors.password =
+        "Le mot de passe doit contenir au moins 6 caractères";
     }
 
     return newErrors;
   };
+  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const newErrors = validateForm();
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
-
     setLoading(true);
-    setMessage("");
-
     // Simulation de connexion
-    setTimeout(() => {
-      // Sauvegarde locale de l'utilisateur (temporaire)
-      localStorage.setItem(
-        "user",
-        JSON.stringify({
-          email: formData.email,
-          name: formData.email.split("@")[0],
-        })
-      );
-
+    const result = await login(formData.email, formData.password);
+    if (result.success) {
+      navigate("/");
+    } else {
+      setApiError(result.error || "Erreur de connexion");
       setLoading(false);
-      setMessage("Connexion réussie ! Redirection...");
-      // Aller à la page d'accueil
-      setTimeout(() => {
-        navigate("/");
-      }, 1000);
-    }, 1000);
+    }
   };
-
   return (
     <div className="min-h-screen bg-black text-white">
       <Navbar />
@@ -150,7 +139,10 @@ function Login() {
           {/* Lien inscription */}
           <p className="text-center mt-4 text-gray-400">
             Pas encore de compte ?{" "}
-            <Link to="/register" className="text-red-600 hover:underline font-semibold">
+            <Link
+              to="/register"
+              className="text-red-600 hover:underline font-semibold"
+            >
               S&apos;inscrire
             </Link>
           </p>
